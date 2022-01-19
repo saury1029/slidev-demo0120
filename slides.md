@@ -36,15 +36,14 @@ drawings:
 
 - ♾ **重复渲染** 图层实例化后调用 setTileUrl 方法，重复渲染严重
 - 🐢 **速度** 查看专题图详情时速度缓慢
-- 🚫 **轮播功能不可用** 以地图形式轮播查看专题图，速度太慢，不可用
+- 🚫 **轮播功能不可用** 地图形式轮播查看专题图，速度太慢，不可用
 
 ## 解决思路
 
 ### 前端
 
 - 🔑 **内部优化、内部调用** 图层 updateState 生命周期内进行数据比对，内部调用 setTileUrl 方法
-- 🖼 使用**图片**展示专题图详情
-- 🎉 使用**图片**轮播专题图
+- 🖼 专题图轮播及查看专题图详情时，使用**图片**查看
 
 ### 后端
 
@@ -57,7 +56,7 @@ Learn more: https://sli.dev/guide/syntax#embedded-styles
 
 <style>
 h2 {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   font-weight: bold;
   background-color: #2B90B6;
   background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
@@ -77,18 +76,21 @@ h3 {
 
 # 减少重复渲染代码
 
-```ts {all|2-3|6-9|all}
-   updateState({ oldProps, props, context }: UpdateStateInfo<any>): void {
-    const { url: oldUrl, regionCode: oldRegionCode } = oldProps;
-    const { url, map, regionCode, visible } = props;
+updateState 生命周期内比对 props、oldProps 及 state
 
-    if (
-      (url !== oldUrl || regionCode !== oldRegionCode || !isEqual(this.state.map, map)) && visible
-    ) {
-      // set map
-      // set tile url
-    }
+<br>
+
+```ts {all|2-3|6-9|all}
+updateState({ oldProps, props, context }: UpdateStateInfo<any>): void {
+  const { url: oldUrl, regionCode: oldRegionCode } = oldProps;
+  const { url, map, regionCode, visible } = props;
+
+  if ((url !== oldUrl || regionCode !== oldRegionCode || !isEqual(this.state.map, map)) && visible) {
+    // set map
+    // set tile url
   }
+}
+
 ```
 
 ---
@@ -99,9 +101,9 @@ h3 {
 html2canvas(document.getElementById('canvas')).then((canvas) => {
   const url = canvas.toDataURL();
   const blob = dataUrlToFile(url, 'image/jpeg');
-
   const formData = new FormData();
   const file = new File([blob], new Date().getTime() + '.jpg');
+
   formData.append('file', file);
 
   uploadMutation.mutate(formData, {
