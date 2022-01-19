@@ -43,8 +43,8 @@ drawings:
 ### 前端
 
 - 🔑 **内部优化、内部调用** 图层 updateState 生命周期内进行数据比对，内部调用 setTileUrl 方法
-- 🖼 **图片形式** 展示专题图详情
-- 🎉 **图片形式** 轮播专题图
+- 🖼 使用**图片**展示专题图详情
+- 🎉 使用**图片**轮播专题图
 
 ### 后端
 
@@ -105,7 +105,7 @@ html2canvas(document.getElementById('canvas')).then((canvas) => {
   formData.append('file', file);
 
   uploadMutation.mutate(formData, {
-    onSucess(res) {
+    onSuccess(res) {
       const { id } = res;
       const submitData = {
         imageId: id,
