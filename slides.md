@@ -34,20 +34,26 @@ drawings:
 
 ## 专题图功能痛点
 
+### 后端
+
+- 🤷‍♂️ 后端生成专题图很困难，前端生成图片，保存到后端更靠谱。
+
+### 前端
+
 - ♾ **重复渲染** 图层实例化后调用 setTileUrl 方法，重复渲染严重
 - 🐢 **速度** 查看专题图详情时速度缓慢
 - 🚫 **轮播功能不可用** 地图形式轮播查看专题图，速度太慢，不可用
 
 ## 解决思路
 
+### 后端
+
+- 🖼 **Headless Browser** 定期定时为自动生成的专题图生成图片
+
 ### 前端
 
 - 🔑 **内部优化、内部调用** 图层 updateState 生命周期内进行数据比对，内部调用 setTileUrl 方法
 - 🖼 专题图轮播及查看专题图详情时，使用**图片**查看
-
-### 后端
-
-- 🖼 **Headless Browser** 定期定时为自动生成的专题图生成图片
 
 <!--
 You can have `style` tag in markdown to override the style for the current page.
@@ -56,6 +62,9 @@ Learn more: https://sli.dev/guide/syntax#embedded-styles
 
 <style>
 h2 {
+  margin:0;
+  font-size:24px !important;
+  line-height: 1 !important;
   margin-bottom: 10px;
   font-weight: bold;
   background-color: #2B90B6;
@@ -67,10 +76,151 @@ h2 {
   -moz-text-fill-color: transparent;
 }
 h3 {
-  margin-top:20px;
+  margin-top:16px;
   margin-bottom:12px;
+  font-size:16px !important;
+  line-height: 1 !important;
+}
+
+ul li {
+  font-size: 16px !important;
 }
 </style>
+
+---
+
+# Selenium
+
+Selenium 是一个涵盖一系列工具和库的项目，这些工具和库支持和支持 Web 浏览器的自动化
+
+官网地址：https://www.selenium.dev/
+
+Selenium 的核心是 WebDriver，这是一个编写指令集的接口
+
+---
+
+# Selenium 原理
+
+> **直接通信**：WebDriver 通过驱动程序将命令传递给浏览器，并通过相同的路由接收返回的信息
+> 驱动是特定于浏览器的，例如谷歌的 Chrome/Chromium 的 ChromeDriver，Mozilla 的火狐的 GeckoDriver 等
+
+<img src="/images/s-1.jpg" class="block mt-12px"/>
+
+---
+
+# Selenium 原理
+
+> **远程通信**：与浏览器的通信也可以是通过 Selenium Server 或 RemoteWebDriver 进行的远程通信。RemoteWebDriver 与驱动程序和浏览器在同一系统上运行。
+
+<img src="/images/s-2.jpg" class="block mt-12px"/>
+
+---
+
+# 实践
+
+- 安装 Selenium
+
+```xml
+<dependency>
+  <groupId>org.seleniumhq.selenium</groupId>
+  <artifactId>selenium-java</artifactId>
+  <version>3.141.59</version>
+</dependency>
+```
+
+<br />
+
+- 安装 Browser Drivers
+
+<img src="/images/s-3.jpg" />
+
+1. Selenium 4 适配 Chrome v75 以上。
+2. 驱动和浏览器大版本一致！如 96.0.4664.45，都要是 96 版本
+
+---
+
+# 实践
+
+```java
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class HelloSelenium {
+    public static void main(String[] args) {
+        driver = new ChromeDriver();
+
+        driver.get("https://google.com");
+
+        driver.getTitle(); // => "Google"
+        driver.quit();
+    }
+}
+
+```
+
+---
+
+# 定期保存图片
+
+```java
+public class SaveImage{
+  public static void main(String[] args) {
+    //1.参数
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments(“--headless”)
+    WebDriver driver = new ChromeDriver(options);
+    //2.页面
+    driver.get("https:menggu_url");
+    WebElement button= driver.findElement(By.Id("#save"));
+    //3.点击按钮
+    button.click(); // => "save image"
+    driver.quit();
+  }
+}
+```
+
+---
+
+# Chrome 参数
+
+- \-\-headless **无头模式**
+- \-\-no-sandbox **禁用沙箱**
+- \-\-enable-logging **日志**
+- \-\-user-agent="xxx" **使用自定义代理**
+- \-\-disable-gpu **禁止 gpu 加速**
+
+---
+
+# Headless 浏览器代码
+
+```java {all|2-8|10-22|12-18}
+public void saveImage() {
+  List<ThematicMap> thematicMaps = thematicMapRepository.findByImageIdIsNull();
+  String loginUrl = publishHost + LOGIN_PATH;
+  WebDriver driver = getWebDriver();
+  driver.get(loginUrl);
+  LocalStorage local = ((WebStorage) driver).getLocalStorage();
+  local.setItem(KEY, TOKEN);
+  driver.navigate().refresh();
+
+  thematicMaps.forEach(map -> {
+    try {
+      String path = THEMATIC_MAP_DETAIL_PATH.replace("{id}", String.valueOf(map.getId()));
+      String thematicDetailUrl = publishHost + path;
+      driver.get(thematicDetailUrl);
+      ThreadUtil.sleep(2 * 60 * 1000);   // 等待五分钟
+      WebElement element = driver.findElement(By.id("save"));
+      element.click();
+      ThreadUtil.sleep(6 * 1000);
+    } catch (Exception e) {
+      // ...
+    }
+  });
+  driver.quit();
+}
+```
 
 ---
 
@@ -118,37 +268,6 @@ html2canvas(document.getElementById('canvas')).then((canvas) => {
     },
   });
 });
-```
-
----
-
-# Headless 浏览器代码
-
-```java {all|2-8|10-22|12-18}
-public void saveImage() {
-  List<ThematicMap> thematicMaps = thematicMapRepository.findByImageIdIsNull();
-  String loginUrl = publishHost + LOGIN_PATH;
-  WebDriver driver = getWebDriver();
-  driver.get(loginUrl);
-  LocalStorage local = ((WebStorage) driver).getLocalStorage();
-  local.setItem(KEY, TOKEN);
-  driver.navigate().refresh();
-
-  thematicMaps.forEach(map -> {
-    try {
-      String path = THEMATIC_MAP_DETAIL_PATH.replace("{id}", String.valueOf(map.getId()));
-      String thematicDetailUrl = publishHost + path;
-      driver.get(thematicDetailUrl);
-      ThreadUtil.sleep(2 * 60 * 1000);   // 等待五分钟
-      WebElement element = driver.findElement(By.id("save"));
-      element.click();
-      ThreadUtil.sleep(6 * 1000);
-    } catch (Exception e) {
-      // ...
-    }
-  });
-  driver.quit();
-}
 ```
 
 ---
