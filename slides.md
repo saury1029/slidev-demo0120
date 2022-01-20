@@ -230,7 +230,7 @@ updateState 生命周期内比对 props、oldProps 及 state
 
 <br>
 
-```ts {all|2-3|6-9|all}
+```ts {all|2-3|5-8|all}
 updateState({ oldProps, props, context }: UpdateStateInfo<any>): void {
   const { url: oldUrl, regionCode: oldRegionCode } = oldProps;
   const { url, map, regionCode, visible } = props;
@@ -247,7 +247,7 @@ updateState({ oldProps, props, context }: UpdateStateInfo<any>): void {
 
 # 保存专题图代码
 
-```ts {all|1-3|5-7|11-15|all}
+```ts {all|1|2-7|11-15|all}
 html2canvas(document.getElementById('canvas')).then((canvas) => {
   const url = canvas.toDataURL();
   const blob = dataUrlToFile(url, 'image/jpeg');
