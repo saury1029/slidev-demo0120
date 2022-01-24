@@ -49,6 +49,7 @@ drawings:
 ### 后端
 
 - 🖼 **Headless Browser** 定期定时为自动生成的专题图生成图片
+- 🗻 **统一 TOKEN** 返回的 tile url 中 token 参数固定，增强浏览器本地缓存效果，加快速度
 
 ### 前端
 
@@ -76,10 +77,11 @@ h2 {
   -moz-text-fill-color: transparent;
 }
 h3 {
-  margin-top:16px;
+  margin-top:12px;
   margin-bottom:12px;
   font-size:16px !important;
   line-height: 1 !important;
+  font-weight:bold;
 }
 
 ul li {
@@ -289,10 +291,6 @@ html2canvas(document.getElementById('canvas')).then((canvas) => {
 - 👏🏽 使纹理图层与外部其余数据隔离，避免了**不必要的渲染**。
 - 🌟 手动或自动生成的专题图，或手动或定期为其生成，专题图详情中包含了**图片字段**，
   查看专题图详情及专题图轮播时，可以使用图片来替代原先方案，极大提高了专题图详情查看速度，并且使得轮播功能可用。
-
-# 其他可优化点
-
-- ❓ 针对除特殊区域外的一般行政区，请求 meta 数据时，是否可以返回相同的 url，来提高浏览器的缓存能力，进一步提高渲染速度。
 
 <style>
   h1 {
