@@ -118,7 +118,7 @@ Selenium 的核心是 WebDriver，这是一个编写指令集的接口
 
 ---
 
-# 实践
+# Selenium 实践
 
 - 安装 Selenium
 
@@ -141,7 +141,7 @@ Selenium 的核心是 WebDriver，这是一个编写指令集的接口
 
 ---
 
-# 实践
+# Selenium 实践
 
 ```java
 import org.openqa.selenium.By;
@@ -226,7 +226,7 @@ public void saveImage() {
 
 ---
 
-# 减少重复渲染代码
+# 前端专题图减少纹理图层重复渲染代码
 
 updateState 生命周期内比对 props、oldProps 及 state
 
@@ -295,5 +295,11 @@ html2canvas(document.getElementById('canvas')).then((canvas) => {
 <style>
   h1 {
     margin-top: 40px;
+    margin-bottom: 40px !important;
+  }
+
+  ul li {
+    margin-bottom: 16px;
+    font-size: 20px;
   }
 </style>
